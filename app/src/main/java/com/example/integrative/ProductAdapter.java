@@ -2,12 +2,16 @@ package com.example.integrative;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.media.Image;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.integrative.models.Product;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.Viewholder>{
     ArrayList<Product> products;
@@ -45,13 +50,17 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.Viewhold
                 Context context = view.getContext();
                 String app_url = " https://play.google.com/store/apps/details?id=com.example.integrative";
                 String text = "Buy " + product.getProductName() + " for Ksh. " + product.getBuyingPrice()+"." + " Click on " + app_url + " to buy.";
-                Intent shareIntent =   new Intent(android.content.Intent.ACTION_SEND);
-                shareIntent.setType("text/plain");
-                shareIntent.putExtra(android.content.Intent.EXTRA_TEXT,text);
-                context.startActivity(Intent.createChooser(shareIntent, "Share using"));
-//				if (intent.resolveActivity(getPacketManager()) !1= null){
-//					startActivity(intent);
-//				}
+//                Intent shareIntent =   new Intent(android.content.Intent.ACTION_SEND);
+                Intent whatsappIntent =   new Intent(android.content.Intent.ACTION_SEND);
+                whatsappIntent.setType("text/plain");
+                whatsappIntent.setPackage("com.whatsapp");
+                whatsappIntent.putExtra(android.content.Intent.EXTRA_TEXT,text);
+//                context.startActivity(Intent.createChooser(shareIntent, "Share using"));
+                try {
+                    Objects.requireNonNull(view.getContext()).startActivity(whatsappIntent);
+                } catch (android.content.ActivityNotFoundException ex) {
+                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.whatsapp")));
+                }
             }
         });
     }
